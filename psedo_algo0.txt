@@ -1,0 +1,17 @@
+Algorithm 0: Switch to Controller Mapping
+
+Input: controller list, switch list
+Output: Pair of switch and controller that mapped
+
+For each switch in switch list do
+  Initialize an empty list called hop_counts
+  For each controller in controller list do
+    Compute the shortest path from switch to controller using the A* algorithm with haversine distance as the heuristic function, assign it to path
+    Compute the number of hops in path, subtract 1, assign it to hop_count
+    Append controller id, hop_count to hop_counts
+  End For
+
+  Sort hop_counts based on the hop_count in ascending order, assign it to sorted_hops list
+  Set the switch to the controller of the first item in sorted_hops list to its controlled controller
+
+End For

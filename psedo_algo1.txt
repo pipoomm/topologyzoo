@@ -1,0 +1,106 @@
+Algorithm 1: KSDP Algorithm
+
+Input: switch load, controller_loads, capacity
+Output: switch to new targer controller
+
+Initialize switch_with_new_controller as an empty dictionary
+Initialize overload_controller_seq as an empty list
+
+While the maximum load in controller_loads is greater than capacity:
+	Set firstrun to True
+	Get the Controller ID with the maximum load in controller_loads, assign it to overloaded_controller
+
+	If overloaded_controller is not in overload_controler_seq then
+      Append overloaded_controller to overload_controler_seq
+  Else 
+      Break the loop
+  End If
+
+  While the load of overloaded_controller in controller_loads is greater than capacity:
+
+  	If firstrun is True then
+  		switches_to_migrate = each switch ID and switch load that connected with overloaded_controller
+  		target_loads = overloaded_controller load - capacity
+  		switch_to_candidate_controller = switches_to_migrate with candidate controller that load not greater than capacity
+  	End If
+
+  	If Size of switch_to_candidate_controller == 0 then
+  		Break the loop 
+  	End If 
+
+  	Sort switch_to_candidate_controller
+
+  	hop_list = hop to each candidate controller in switch_to_candidate_controller
+
+  	Set lowest_hop_change to the minimum value in hop_list
+
+  	Initialize sum_load as an empty dictionary
+  	
+  	For hop count from switch in switch_to_candidate_controller do 
+  		If hop count from switch equals lowest_hop_change then
+		    If Candidate Controller ID is in sum_load:
+		      Add switch load to the corresponding value in sum_load
+		    Else:
+		      Set the corresponding value in sum_load to switch load
+		    End If
+			End If
+		End For
+
+		Initialize A as an empty dictionary
+		For each Candidate Controller ID in sum_load do
+			If corresponding value in sum_load greater than reamaining load value of Candidate Controller ID then
+				Set the corresponding value in A to the reamaining load value of Candidate Controller ID 
+			Else
+				Set the corresponding value in A switch load
+			End If
+		Enf For
+
+		Set candidate_con to the key in A with the maximum value
+		Initialize items_min and items_max as an empty lists
+
+		For each switch and candidate controller in switch_to_candidate_controller do 
+			If Size of candidate controller greater than 1 then
+				Set deltahop_cprime to hop of next closest candidate controller 
+			Else
+				deltahop_cprime = 2 * hop of closest candidate controller 
+			End If
+			
+			If closest candidate controller equals candidate_con and hop to closest candidate controller equals lowest_hop_change then
+				energy_cost = switch load * hop to closest candidate controller
+				energy_cost_prime = switch load * (deltahop_cprime - hop to closest candidate controller)
+				If energy_cost_prime == 0 0 then
+					energy_cost_prime = 1
+				End If
+
+			Append switch id, switch load, candidate_con controller id, and energy_cost to items_min
+			Append switch id, switch load, candidate_con controller id, and energy_cost_prime to items_max
+		End For
+
+		Compute remove_overload_con based on overloaded_controller load - capacity
+		Compute receive_candidate_con based on capacity - candidate_con load 
+
+		If receive_candidate_con is greater than remove_overload_con then
+	        Set target_weight to remove_overload_con and max_weight to receive_candidate_con
+	        Call minKSDP2 function with target_weight, max_weight, items_min as arguments, assign the results to selected_items, total_loads
+	  Else:
+	        Set target_weight to receive_candidate_con
+	        Call maxKSDP function with target_weight, items_max as arguments, assign the results to selected_items, total_loads
+	  End If
+
+		
+    Update controller_loads of overloaded_controller value based on total_loads
+    Update controller_loads of candidate_con value based on total_loads 
+
+    Update switch_with_new_controller based on switch id, candidate_con controller id in selected_items 
+
+    If switch id in selected_items == switch ID in switch_to_candidate_controller or candidate_con controller id in selected_items == candidate controller id in switch_to_candidate_controller then
+    	Remove switch ID or candidate controller id in switch_to_candidate_controller
+    End If
+
+    If Size of switch_to_candidate_controller == 0 then
+      	Break the loop
+    End If 
+
+    Set firstrun to False
+
+Return switch_with_new_controller

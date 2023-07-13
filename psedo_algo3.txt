@@ -1,0 +1,31 @@
+Algorithm 3: Max-Knapsack
+
+Input: target_weight, items
+Output: selected switch id with new controller id, load of all selected switch
+
+Get the number of items, assign it to n
+
+Initialize a 2D list called dp with dimensions (n + 1) * (target_weight + 1), filled with 0
+
+For each item in items do 
+	Get the switch load and energy_cost_prime of the item, assign them to weight and value
+	For each j from 1 to target_weight do
+  		If weight is less than or equal to j then
+    		Set dp[i][j] to the maximum of value + dp[i - 1][j - weight] and dp[i - 1][j]
+  		Else
+    		Set dp[i][j] to dp[i - 1][j]
+    	End If 
+   	End For
+End For
+
+Initialize selected_items as an empty list and total_loads as 0
+Set j to target_weight
+For each i from n to 1 do
+	If dp[i][j] is not equal to dp[i - 1][j] then
+  		Append the switch id, candidate_con controller id elements of items[i - 1] to selected_items
+  		Add weight to total_loads
+  		Subtract weight from j
+  	End If 
+End For
+
+Return selected_items, total_loads

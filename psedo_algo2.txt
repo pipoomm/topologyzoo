@@ -1,0 +1,49 @@
+Algorithm 2: Min-Knapsack
+
+Input: target_weight, max_weight, items
+Output: selected switch id with new controller id, load of all selected switch
+
+Compute the sum of switch load of the item, assign it to sum_total_weight
+
+If sum_total_weight is less than target_weight then 
+    Set target_weight to sum_total_weight
+End If
+
+Set init_max_weight to max_weight + 1
+
+Get the number of items, assign it to n
+
+Initialize a 2D list called dp with dimensions (n + 1) * init_max_weight, filled with infinity value
+Set the first column of dp to 0
+
+For each item in items do
+Get the switch load and energy_cost of the item, assign them to weight and value
+For each j from 0 to init_max_weight - 1 do
+  If weight is less than or equal to j then 
+    Set dp[i][j] to the minimum of dp[i - 1][j] and dp[i - 1][j - weight] + value
+  Else
+    Set dp[i][j] to dp[i - 1][j]
+  End If
+End For
+
+Initialize min_value to infinity and total_loads to -1
+For each weight, value pair from dp[n][target_weight] to the end of dp[n] do
+	If value is less than min_value then
+	  Set min_value to value and total_loads to weight
+	End If
+End For
+
+Initialize selected_items as an empty list
+If min_value is infinity then
+	Set total_loads to 0
+	Return selected_items, total_loads
+
+Set i to n and j to total_loads
+While i is greater than 0 and j is greater than 0 do
+	If dp[i][j] is not equal to dp[i - 1][j] then
+	  Append the switch id, candidate_con controller id elements of items[i - 1] to selected_items
+	  Subtract the second element of items[i - 1] from j
+	End If 
+	Decrement i
+
+Return selected_items, total_loads
